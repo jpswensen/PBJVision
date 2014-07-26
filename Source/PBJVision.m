@@ -1815,6 +1815,14 @@ typedef void (^PBJVisionBlock)();
     }];
 }
 
+- (BOOL)videoStabilizationEnabled
+{
+    //return _captureSession video
+    AVCaptureConnection *videoConnection = [_captureOutputVideo connectionWithMediaType:AVMediaTypeVideo];
+    return videoConnection.videoStabilizationEnabled;
+}
+
+
 - (void)captureCurrentVideoThumbnail
 {
     if (_flags.recording) {
@@ -1947,14 +1955,20 @@ typedef void (^PBJVisionBlock)();
     
     if (_additionalCompressionProperties && [_additionalCompressionProperties count] > 0) {
         NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:_additionalCompressionProperties];
-        [mutableDictionary setObject:@(_videoBitRate) forKey:AVVideoAverageBitRateKey];
-        [mutableDictionary setObject:@(_videoFrameRate) forKey:AVVideoMaxKeyFrameIntervalKey];
+        
+        if ([mutableDictionary objectForKey:AVVideoAverageBitRateKey] == nil)
+            [mutableDictionary setObject:@(_videoBitRate) forKey:AVVideoAverageBitRateKey];
+        if ([mutableDictionary objectForKey:AVVideoMaxKeyFrameIntervalKey] == nil)
+            [mutableDictionary setObject:@(_videoFrameRate) forKey:AVVideoMaxKeyFrameIntervalKey];
+        
         compressionSettings = mutableDictionary;
     } else {
         compressionSettings = @{ AVVideoAverageBitRateKey : @(_videoBitRate),
                                  AVVideoMaxKeyFrameIntervalKey : @(_videoFrameRate) };
     }
     
+    videoDimensions.width = 480;
+    videoDimensions.height = 480;
 	NSDictionary *videoSettings = @{ AVVideoCodecKey : AVVideoCodecH264,
                                      AVVideoScalingModeKey : AVVideoScalingModeResizeAspectFill,
                                      AVVideoWidthKey : @(videoDimensions.width),

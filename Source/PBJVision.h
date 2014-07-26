@@ -211,6 +211,8 @@ static CGFloat const PBJVideoBitRate1280x750 = 5000000 * 8;
 - (void)endVideoCapture;
 - (void)cancelVideoCapture;
 
+- (BOOL)videoStabilizationEnabled;
+
 // thumbnails
 
 @property (nonatomic) BOOL thumbnailEnabled; // thumbnail generation, disabling reduces processing time for a photo or video
